@@ -760,7 +760,7 @@ module.exports = function (grunt) {
 
     grunt.registerMultiTask('unified-release-pack', function () {
         grunt.task.run(`electron-builder-pack:${this.target}`);
-        grunt.task.run(`zip-mac-folder:${this.target}`);
+        // grunt.task.run(`zip-mac-folder:${this.target}`);
     });
 
     grunt.registerTask('package-report', function () {
