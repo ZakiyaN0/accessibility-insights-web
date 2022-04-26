@@ -4,7 +4,7 @@ name: CI
 
 on:
   push:
-    branches: main
+    branches: karan/node-16
   pull_request:
   schedule:
     - cron: '0 19 * * 0'
@@ -14,48 +14,6 @@ env:
   NODE_VERSION: 16.14.2
 
 jobs:
-  build:
-    runs-on: ubuntu-20.04
-    env: { PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1 }
-    steps:
-    - uses: actions/checkout@v2
-      timeout-minutes: 2
-
-    - uses: actions/setup-node@v2
-      with: { node-version: "${{ env.NODE_VERSION }}" }
-      timeout-minutes: 2
-
-    - name: query yarn cache path
-      id: yarn-cache-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-      timeout-minutes: 1
-
-    - name: restore yarn cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          ${{ steps.yarn-cache-path.outputs.dir }}
-          node_modules
-        key: ${{ runner.os }}-yarn-${{ hashFiles('.github/workflows/ci.yml') }}-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-${{ hashFiles('.github/workflows/ci.yml') }}
-      timeout-minutes: 5
-
-    - run: yarn install --frozen-lockfile --prefer-offline
-      timeout-minutes: 10
-
-    # CG and NOTICE generation would go here
-
-    - run: yarn build:all
-      timeout-minutes: 10
-
-    - name: upload artifact build-results
-      uses: actions/upload-artifact@v2
-      with:
-        name: build-results
-        path: drop
-      timeout-minutes: 5
-    
   unit-tests:
     name: unit-tests-${{ strategy.job-index }}
     runs-on: ubuntu-20.04
@@ -106,63 +64,6 @@ jobs:
           test-results/unit/junit.xml
           test-results/unit/coverage/cobertura-coverage.xml
       timeout-minutes: 5
-
-  lints:
-    runs-on: ubuntu-20.04
-    env: { PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1 }
-    steps:
-    - uses: actions/checkout@v2
-      timeout-minutes: 2
-
-    - uses: actions/setup-node@v2
-      with: { node-version: "${{ env.NODE_VERSION }}" }
-      timeout-minutes: 2
-
-    - name: query yarn cache path
-      id: yarn-cache-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-      timeout-minutes: 1
-
-    - name: restore yarn cache
-      uses: actions/cache@v2
-      with:
-        path: |
-          ${{ steps.yarn-cache-path.outputs.dir }}
-          node_modules
-        key: ${{ runner.os }}-yarn-${{ hashFiles('.github/workflows/ci.yml') }}-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-${{ hashFiles('.github/workflows/ci.yml') }}
-      timeout-minutes: 5
-
-    - run: yarn install --frozen-lockfile --prefer-offline
-      timeout-minutes: 10
-
-    - run: yarn copyright:check
-      timeout-minutes: 1
-
-    - run: yarn format:check
-      timeout-minutes: 5
-
-    - run: yarn lint:check:all
-      timeout-minutes: 5
-
-    - run: yarn scss:build
-      timeout-minutes: 3
-
-    - run: yarn null:check
-      timeout-minutes: 5
-
-  codeql:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v2
-      timeout-minutes: 2
-
-    - uses: github/codeql-action/init@v1
-      timeout-minutes: 2
-
-    - uses: github/codeql-action/analyze@v1
-      timeout-minutes: 10
 
   e2e-web-tests:
     name: e2e-web-tests-${{ strategy.job-index }}
