@@ -67,7 +67,7 @@
         "start:unified": "electron drop/electron/unified-dev/product/bundle/main.bundle.js",
         "start:unified:dev": "cross-env DEV_MODE=true yarnpkg start:unified",
         "start:unified:mock-adb": "cross-env ANDROID_HOME=drop/mock-adb yarnpkg start:unified",
-        "test": "node --unhandled-rejections=strict --expose-gc --no-compilation-cache --max-old-space-size=16384 $(yarn bin jest) --logHeapUsage --projects src/tests/unit",
+        "test": "node --unhandled-rejections=strict --no-compilation-cache --max-old-space-size=16384 $(yarn bin jest) --projects src/tests/unit",
         "publish-code-coverage": "npx codecov",
         "test:e2e": "node --unhandled-rejections=strict --max-old-space-size=16384 $(yarn bin jest) --projects src/tests/end-to-end --runInBand --forceExit --detectOpenHandles",
         "test:e2e:docker:build": "docker build -t accessibility-insights-e2e  --target web .",
