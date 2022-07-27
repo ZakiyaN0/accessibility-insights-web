@@ -23,6 +23,8 @@ export const accessibleNamesConfiguration: RuleConfiguration = {
         // the UI components we care about
         selector: createSelector(),
         enabled: false,
+        any: [accessibleNamesCheckId],
+        matches: hasAccessibleName,
     },
 };
 
@@ -70,6 +72,13 @@ function createSelector(): string {
     });
 
     return selectors.join(',');
+}
+
+function hasAccessibleName(element: any): boolean {
+    const accessibleText = AxeUtils.getAccessibleText(element); // get the accessible name
+    if (accessibleText != null) {
+        return true;
+    }
 }
 
 function evaluateAccessibleNames(node: HTMLElement): boolean {
